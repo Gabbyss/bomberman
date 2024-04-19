@@ -2,25 +2,44 @@
 #include <ftxui/screen/screen.hpp>
 #include <iostream>
 #include <string>
+#include <thread>
+#include <ftxui/screen/color.hpp>
+#include <experimental/random>
 
 using namespace std;
 using namespace ftxui;
 
 int main(int argc, char const *argv[])
+
 {
-    const std::string texto = "Hola Mundo";
-    Element textElement = text(texto);
-    Element dibujo = hbox(textElement | border);
+    int fotograma = 0;
+    string reset;
 
-    Dimensions Alto = Dimension::Fixed(10);
-    Dimensions Ancho = Dimension::Fixed(10);
+    while (true)
+    {
+        fotograma++;
 
-    Screen pantalla = Screen::Create(Ancho, Alto);
+        int R = std::experimental::randint(0, 255);
+        int G = std::experimental::randint(0, 255);
+        int B = std::experimental::randint(0, 255);
 
-    Render(pantalla, dibujo);
+        Element personaje = spinner(21, fotograma);
+        Decorator colorFondo = bgcolor(Color::RGB(R, G, B));
+        Decorator colorTexto = color(Color::RGB(B, G, R));
+        Element dibujo = border({hbox(personaje)}) | colorFondo | colorTexto;
 
-    pantalla.Print();
-    cout << ebdl :
+        Dimensions Alto = Dimension::Fixed(7);
+        Dimensions Ancho = Dimension::Fixed(15);
 
-        return 0;
+        Screen pantalla = Screen::Create(Ancho, Alto);
+
+        Render(pantalla, dibujo);
+
+        pantalla.Print();
+        reset = pantalla.ResetPosition();
+        cout << reset;
+        this_thread::sleep_for(0.1s);
+    }
+
+    return 0;
 }
